@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Users</title>
+
+    <script>
+        function deleteUser(userId) {
+            fetch(`/deleteUser/${userId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `id=${userId}`
+            })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.reload();
+                    } else {
+                        return response.text().then(text => {
+                            throw new Error(text);
+                        });
+                    }
+                })
+                .catch(error => alert("Failed to delete user: " + error.message));
+        }
+    </script>
+
+</head>
+<body>
+<h1>Users</h1>
+
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Nickname</th>
+        <th>Email</th>
+        <th>Specialization</th>
+        <th>Age</th>
+        <th>Actions</th>
+    </tr>
+    <tr th:each="user : ${table}">
+        <td th:text="${user.id}"></td>
+        <td th:text="${user.nicknname}"></td>
+        <td th:text="${user.email}"></td>
+        <td th:text="${user.specialization}"></td>
+        <td th:text="${user.age}"></td>
+        <td>
+            <button th:attr="onclick='deleteUser(' + ${user.id} + ')'">Delete</button>
+        </td>
+    </tr>
+</table>
+
+<hr>
+
+<h2>Add User</h2>
+<form action="/addUser" method="post">
+    <label>Name: <input type="text" name="nickname" required></label><br>
+    <label>Surname: <input type="text" name="email" required></label><br>
+    <label>Department: <input type="text" name="specialization" required></label><br>
+    <label>Salary: <input type="number" name="age" required></label><br>
+    <button type="submit">Add User</button>
+</form>
+
+<hr>
+
+<h2>Update User</h2>
+<form action="/updateUser" method="post">
+    <label>ID: <input type="number" name="id" required></label><br>
+    <label>Name: <input type="text" name="nickname"></label><br>
+    <label>Surname: <input type="text" name="email"></label><br>
+    <label>Department: <input type="text" name="specialization"></label><br>
+    <label>Salary: <input type="number" name="age"></label><br>
+    <button type="submit">Update User</button>
+</form>
+
+</body>
+</html>
